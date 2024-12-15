@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to RentCar</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>🚗 RentCar</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'chat_list' %}">Your Chats</a></li>
+                <li><a href="/car-list/">My Cars</a></li>
+                <li><a href="{% url 'home' %}">All Cars</a></li>
+                <li><a href="/users/logout/">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="dashboard">
+            <h2>Hello, {{ user.username }}!</h2>
+            <p>Welcome back! Manage your cars and rentals here.</p>
+        </section>
+
+        <!-- List of All Cars -->
+        <section class="car-list">
+            <h2>All Cars</h2>
+            {% if cars %}
+                <ul>
+                    {% for car in cars %}
+                        <li>
+                            <h3>{{ car.brand }} {{ car.model }} ({{ car.year }})</h3>
+                            <p><strong>Price per day:</strong> ${{ car.price_per_day }}</p>
+                            <p>{{ car.description }}</p>
+                            {% if car.image %}
+                                <img src="{{ car.image.url }}" alt="{{ car.brand }} {{ car.model }}" style="max-width: 200px;">
+                            {% endif %}
+                            <p>Car owner: {{ car.user }} </p>
+                            <a href="{% url 'create_chat' car.user.id %}">Start Chat with {{ car.user.username }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No cars available at the moment.</p>
+            {% endif %}
+        </section>
+
+        <!-- List of User's Cars -->
+        <section class="car-list">
+            <h2>Your Cars</h2>
+            {% if user_cars %}
+                <ul>
+                    {% for car in user_cars %}
+                        <li>
+                            <h3>{{ car.brand }} {{ car.model }} ({{ car.year }})</h3>
+                            <p><strong>Price per day:</strong> ${{ car.price_per_day }}</p>
+                            <p>{{ car.description }}</p>
+                            {% if car.image %}
+                                <img src="{{ car.image.url }}" alt="{{ car.brand }} {{ car.model }}" style="max-width: 200px;">
+                            {% endif %}
+                            <!-- Delete Button -->
+                            <form action="{% url 'delete_car' car.id %}" method="POST" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this car?');">
+                                    Delete
+                                </button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>You have not added any cars yet.</p>
+            {% endif %}
+        </section>
+
+        <!-- Form to Add a New Car -->
+        <section class="add-car">
+            <h2>Add a New Car</h2>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn">Add Car</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 RentCar. All rights reserved.</p>
+    </footer>
+</body>
+</html>

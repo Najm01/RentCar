@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Chats</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>🚗 RentCar</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'car_list' %}">My Cars</a></li>
+                <li><a href="{% url 'home' %}">All Cars</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <ul>
+            {% for chat in chats %}
+                <li>
+                    <a href="{% url 'chat_detail' chat.id %}">
+                        Chat with {{ chat.other_user }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </main>
+</body>
+</html>
